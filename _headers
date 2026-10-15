@@ -1,0 +1,13 @@
+# Cloudflare Pages headers. GitHub Pages ignores this file.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+/_templates/*
+  X-Robots-Tag: noindex
+
+/work-with-me/*
+  X-Robots-Tag: noindex
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

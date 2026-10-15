@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kunjar Bhaduri</title>
+    <link>https://kunjarbhaduri.com/</link>
+    <atom:link href="https://kunjarbhaduri.com/rss.xml" rel="self" type="application/rss+xml"/>
+    <description>Essays and field notes on banking, payments and insurance technology, and on AI agents in regulated businesses.</description>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 15 Oct 2026 12:00:00 GMT</lastBuildDate>
+    <!-- One <item> per essay or field note, newest first:
+    <item>
+      <title>Title</title>
+      <link>https://kunjarbhaduri.com/essays/slug/</link>
+      <guid isPermaLink="true">https://kunjarbhaduri.com/essays/slug/</guid>
+      <pubDate>RFC 822 date</pubDate>
+      <description>One-sentence summary.</description>
+    </item>
+    -->
+  </channel>
+</rss>
