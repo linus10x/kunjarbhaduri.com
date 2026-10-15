@@ -1,0 +1,30 @@
+# Kunjar Bhaduri
+
+> Kunjar Bhaduri is a technology executive in Dallas, Texas who works with financial-services leaders and private equity sponsors when technology has started to limit the business. He writes about banking, payments and insurance technology and about controls for AI agents in regulated businesses, and he designed and open-sourced the Autonomy Ladder. Through Bhaduri Advisory he offers interim and fractional CTO work and a fixed-fee AI agent readiness diagnostic.
+
+Contact is through LinkedIn or the booking link on the Advisory page. There is no postal address for this site.
+
+## About
+
+- [About Kunjar Bhaduri](https://kunjarbhaduri.com/about/): bio, track record and sectors
+
+## Writing
+
+- [Essays](https://kunjarbhaduri.com/essays/): long pieces on financial-services technology and AI agents in regulated work
+- [Field notes](https://kunjarbhaduri.com/field-notes/): short notes from delivery, data and AI agent work
+- [RSS feed](https://kunjarbhaduri.com/rss.xml)
+
+## Advisory
+
+- [Bhaduri Advisory](https://kunjarbhaduri.com/advisory/): interim and fractional CTO work, and the diagnostic
+- [AI agent readiness diagnostic](https://kunjarbhaduri.com/advisory/agent-readiness-diagnostic/): five business days, fixed fee of $2,500 for one workflow or $5,000 for up to three, for banks, credit unions, insurers and payments firms
+
+## Open work
+
+- [Autonomy Ladder](https://autonomy-ladder.io/): framework for deciding what an AI system may do on its own in a regulated business
+- [GitHub, linus10x](https://github.com/linus10x): the six Autonomy Ladder libraries, each archived on Zenodo with a DOI
+
+## Profiles
+
+- [LinkedIn](https://www.linkedin.com/in/kunjarbhaduri/)
+- [GitHub](https://github.com/linus10x)
