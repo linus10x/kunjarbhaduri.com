@@ -1,0 +1,33 @@
+# Kunjar Bhaduri
+
+> Full text of the home page, except the track-record figures. Those stay on https://kunjarbhaduri.com/ and are not copied here. No street address.
+
+## https://kunjarbhaduri.com/
+
+CTO, CIO and Chief AI Officer.
+
+Kunjar Bhaduri.
+
+Technology turnarounds for financial services and PE-backed companies.
+
+Interim, fractional or permanent. Dallas, Texas.
+
+I'm a CTO who works with private equity sponsors and leadership teams in financial services and other regulated businesses. I'm open to permanent, interim and fractional CTO, CIO and Chief AI Officer roles, and to technology operating partner and board work. Recruiters and sponsors can contact me through LinkedIn.
+
+I'm usually brought in when technology has started to limit the business: a failing program, a client ready to leave, a platform nobody fully understands, or a cyber incident. My first job is to find out what is actually broken and who owns each decision, then set priorities the business can execute.
+
+The track-record section names Broadridge, Wipro Opus and Cognizant. The figures in that section are on the page and are not repeated in this file.
+
+AI is now part of the same operating work. My work on Autonomy Ladder focuses on reference implementations of controls for AI agents in regulated businesses: what the system may do, how that limit is tested, and what happens when a control fails.
+
+I'm based in Dallas. Most of my career has been in financial services: wealth management, capital markets, securities services, cards, lending and mortgage.
+
+Sectors: wealth management, capital markets, securities services, cards, lending, mortgage.
+
+What roles are you open to? I'm open to permanent, interim and fractional CTO, CIO and Chief AI Officer roles, and to technology operating partner and board work.
+
+Where are you based? I'm based in Dallas.
+
+How should a recruiter or sponsor contact you? Recruiters and sponsors can contact me through LinkedIn.
+
+Recruiters, search partners, sponsors and executives hiring for a CTO, CIO or Chief AI Officer seat can reach me on LinkedIn: https://www.linkedin.com/in/kunjarbhaduri/
