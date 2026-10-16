@@ -1,0 +1,15 @@
+# Kunjar Bhaduri
+
+> Kunjar Bhaduri, CTO, CIO and Chief AI Officer for financial services and PE-backed companies. Interim, fractional or permanent. Dallas, Texas.
+
+Site: https://kunjarbhaduri.com/
+The only page in this repo today is the home page. The track-record section on that page is the source for any figure. This file does not restate those figures.
+
+## Pages
+
+- [Home](https://kunjarbhaduri.com/): the thesis line is "Technology turnarounds for financial services and PE-backed companies." Contact is the LinkedIn profile linked from the page.
+
+## Not in this file
+
+- No street address.
+- Draft PR #1 on this repo is a separate essays hub and is not this change.
