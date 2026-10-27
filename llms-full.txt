@@ -31,3 +31,7 @@ Where are you based? I'm based in Dallas.
 How should a recruiter or sponsor contact you? Recruiters and sponsors can contact me through LinkedIn.
 
 Recruiters, search partners, sponsors and executives hiring for a CTO, CIO or Chief AI Officer seat can reach me on LinkedIn: https://www.linkedin.com/in/kunjarbhaduri/
+
+Booking: https://calendly.com/kunjarbhaduri/intro
+Lead form posts to /api/leads (no auto-email).
+Try-it: https://autonomy-ladder.io/assessment
