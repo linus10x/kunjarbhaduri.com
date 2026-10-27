@@ -19,3 +19,6 @@ The only page in this repo today is the home page. The track-record section on t
 
 - LinkedIn: https://www.linkedin.com/in/kunjarbhaduri/
 - Book 15 minutes: https://calendly.com/kunjarbhaduri/intro
+
+- [Essay: EU AI Act for US financial firms](https://kunjarbhaduri.com/essays/eu-ai-act-for-us-financial-firms/)
+- [Essay: Troubled vs doomed program](https://kunjarbhaduri.com/essays/a-troubled-program-or-a-doomed-one/)
