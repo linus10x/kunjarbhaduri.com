@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kunjar Bhaduri</title>
+    <link>https://kunjarbhaduri.com/</link>
+    <atom:link href="https://kunjarbhaduri.com/rss.xml" rel="self" type="application/rss+xml"/>
+    <description>Essays on financial-services technology and AI in regulated businesses.</description>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 27 Oct 2026 12:00:00 GMT</lastBuildDate>
+    <item>
+      <title>The EU AI Act, read by a US financial firm</title>
+      <link>https://kunjarbhaduri.com/essays/eu-ai-act-for-us-financial-firms/</link>
+      <guid isPermaLink="true">https://kunjarbhaduri.com/essays/eu-ai-act-for-us-financial-firms/</guid>
+      <pubDate>Tue, 27 Oct 2026 12:00:00 GMT</pubDate>
+      <description>How a US bank, lender or insurer should read the EU AI Act.</description>
+    </item>
+    <item>
+      <title>A troubled program or a doomed one? Five tells</title>
+      <link>https://kunjarbhaduri.com/essays/a-troubled-program-or-a-doomed-one/</link>
+      <guid isPermaLink="true">https://kunjarbhaduri.com/essays/a-troubled-program-or-a-doomed-one/</guid>
+      <pubDate>Tue, 27 Oct 2026 12:00:00 GMT</pubDate>
+      <description>Five tells for deciding whether a technology program can be saved or stopped.</description>
+    </item>
+  </channel>
+</rss>
