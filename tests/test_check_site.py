@@ -84,6 +84,7 @@ class CheckSiteTest(unittest.TestCase):
         self.assertFailsWith("en or em dash")
 
     def test_placeholder_warns_in_structure_mode_and_fails_in_release(self):
+        self.edit("about/index.html", "Dallas, Texas", "[KUNJAR DECISION: test placeholder] Dallas, Texas")
         self.assertTrue(any("[KUNJAR" in w for w in check_site.check(self.site, False)[1]))
         self.assertFailsWith("unfilled placeholder", release=True)
 
