@@ -6,7 +6,7 @@
     <atom:link href="https://kunjarbhaduri.com/rss.xml" rel="self" type="application/rss+xml"/>
     <description>Essays and field notes on banking, payments and insurance technology, and on AI agents in regulated businesses.</description>
     <language>en-us</language>
-    <lastBuildDate>Thu, 15 Oct 2026 12:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 27 Oct 2026 12:00:00 GMT</lastBuildDate>
     <!-- One <item> per essay or field note, newest first:
     <item>
       <title>Title</title>
@@ -16,5 +16,19 @@
       <description>One-sentence summary.</description>
     </item>
     -->
+    <item>
+      <title>The EU AI Act, read by a US financial firm</title>
+      <link>https://kunjarbhaduri.com/essays/eu-ai-act-for-us-financial-firms/</link>
+      <guid isPermaLink="true">https://kunjarbhaduri.com/essays/eu-ai-act-for-us-financial-firms/</guid>
+      <pubDate>Tue, 27 Oct 2026 12:00:00 GMT</pubDate>
+      <description>How a US bank, lender or insurer should read the EU AI Act: scope, Annex III, provider vs deployer, and the dates that matter.</description>
+    </item>
+    <item>
+      <title>A troubled program or a doomed one? Five tells</title>
+      <link>https://kunjarbhaduri.com/essays/a-troubled-program-or-a-doomed-one/</link>
+      <guid isPermaLink="true">https://kunjarbhaduri.com/essays/a-troubled-program-or-a-doomed-one/</guid>
+      <pubDate>Tue, 27 Oct 2026 12:00:00 GMT</pubDate>
+      <description>Five tells for deciding whether a technology program can be saved or should be stopped, with a Monday scorecard.</description>
+    </item>
   </channel>
 </rss>
