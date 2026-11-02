@@ -12,6 +12,6 @@ jobs:
   seo:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: SEO and AI crawl files
         run: python3 tools/check_seo.py
