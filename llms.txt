@@ -8,7 +8,18 @@ The only page in this repo today is the home page. The track-record section on t
 
 ## Pages
 
-- [Home](https://kunjarbhaduri.com/): the thesis line is "Technology turnarounds for financial services and PE-backed companies." Contact is the LinkedIn profile linked from the page.
+- [Home](https://kunjarbhaduri.com/): the thesis line is "Technology turnarounds for financial services and PE-backed companies." The Ways to work together section covers fractional, interim, full time, board, advisory and expert network calls. Contact is email, LinkedIn, or Calendly.
+
+## Ways to work together
+
+Each option books the same intro call: https://calendly.com/kunjarbhaduri/intro
+
+- Fractional technology leadership
+- Interim technology leadership
+- Full time CTO, CIO or Chief AI Officer
+- Board technology work
+- Advisory work
+- Expert network calls (hourly rate on request)
 
 ## Not in this file
 
@@ -17,5 +28,6 @@ The only page in this repo today is the home page. The track-record section on t
 
 ## Contact
 
+- Email: kunjarbhaduri@gmail.com
 - LinkedIn: https://www.linkedin.com/in/kunjarbhaduri/
 - Book 15 minutes: https://calendly.com/kunjarbhaduri/intro
