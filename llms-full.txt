@@ -2,6 +2,8 @@
 
 > Full text of the home page, except the track-record figures. Those stay on https://kunjarbhaduri.com/ and are not copied here. No street address.
 
+[Staged DRAFT, 2026-11-04: the Bhaduri Advisory section and the two advisory questions below are pending voice review and owner approval. Not yet published.]
+
 ## https://kunjarbhaduri.com/
 
 CTO, CIO and Chief AI Officer.
@@ -20,6 +22,24 @@ The track-record section names Broadridge, Wipro Opus and Cognizant. The figures
 
 AI is now part of the same operating work. My work on Autonomy Ladder focuses on reference implementations of controls for AI agents in regulated businesses: what the system may do, how that limit is tested, and what happens when a control fails.
 
+Bhaduri Advisory. Strategy, operations and technology for founders.
+
+I have run P&Ls and technology teams in financial services for most of my career. I am now independent, and through Bhaduri Advisory I put that experience to work for founders in Dallas-Fort Worth, as a fractional or interim operator alongside the founder.
+
+What I can do for a founder: company strategy and go-to-market (work out who the customer is, how to reach them, and which partners or alliances can help; support in investor meetings); running the business day to day (what to source and how to buy it, supplier terms, budgets, pricing and weekly priorities); hiring and keeping good people (which leaders and roles are needed next, help hiring them, and the management habits that keep them); technology, product and AI (review the architecture and AI-written code before growth makes problems costly, and get data and models ready for real customers).
+
+A good fit is a founder working on a real customer problem who wants an experienced operator involved. I am most useful when the problem touches technology, operations and commercial decisions at once.
+
+Software companies building fast with AI: teams shipping quickly with AI need an experienced look at the architecture, security and delivery before customers or investors look closely. I review the architecture and the AI-written code, and help the team fix what growth would otherwise make costly.
+
+Companies training AI and analytics models: I help teams check their data, test and monitor their models, and get from a promising model to a first customer pilot.
+
+Founders who need a business operator: strategy, partnerships and alliances, hiring, budgets and supplier choices, as a fractional or interim operator alongside the founder.
+
+How we could work together: start with a focused review or a defined project; it can grow into an ongoing or interim role. Focused review: two weeks, fixed fee, one defined question (go-to-market, product architecture, hiring and supplier priorities), ends with a written recommendation and next steps. Fractional retainer: a few hours a week, billed monthly, ongoing strategy, operating or technology leadership, with decisions and ownership agreed up front. Project or interim: scoped to an outcome, such as a go-to-market plan, key hires, a supplier strategy, or a product ready to launch.
+
+On terms: Open to equity for the right founder and business. Cash-plus-equity, project fees and monthly retainers also work. Scope, time and terms are agreed per company before starting, and priced once the work is defined.
+
 I'm based in Dallas. Most of my career has been in financial services: wealth management, capital markets, securities services, cards, lending and mortgage.
 
 Sectors: wealth management, capital markets, securities services, cards, lending, mortgage.
@@ -30,7 +50,13 @@ Where are you based? I'm based in Dallas.
 
 How should a recruiter or sponsor contact you? Recruiters and sponsors can contact me through LinkedIn.
 
+How does an advisory engagement start? Start with a focused review or a defined project. A focused review runs two weeks for a fixed fee, takes one defined question, and ends with a written recommendation and next steps. It can grow into a fractional retainer, a few hours a week billed monthly, or a project or interim role scoped to an outcome.
+
+What terms does Bhaduri Advisory work on? Open to equity for the right founder and business. Cash-plus-equity, project fees and monthly retainers also work. Scope, time and terms are agreed per company before starting, and priced once the work is defined.
+
 Recruiters, search partners, sponsors and executives hiring for a CTO, CIO or Chief AI Officer seat can reach me on LinkedIn: https://www.linkedin.com/in/kunjarbhaduri/
+
+Founders can book 15 minutes, or use the lead form on the page and choose Founder / advisory (Bhaduri Advisory).
 
 Booking: https://calendly.com/kunjarbhaduri/intro
 Lead form posts to /api/leads (no auto-email).
