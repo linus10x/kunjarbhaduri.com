@@ -28,10 +28,15 @@ What roles are you open to? I'm open to permanent, interim and fractional CTO, C
 
 Where are you based? I'm based in Dallas.
 
-How should a recruiter or sponsor contact you? Recruiters and sponsors can contact me through LinkedIn.
+How should a recruiter or sponsor contact you? Recruiters and sponsors can contact me through LinkedIn, email kunjarbhaduri@gmail.com, or book fifteen minutes on Calendly.
+
+Ways to work together: fractional, interim, full time, board, advisory, and expert network calls. Expert network calls are hourly rate on request. Each option books https://calendly.com/kunjarbhaduri/intro
+
+Email: kunjarbhaduri@gmail.com
 
 Recruiters, search partners, sponsors and executives hiring for a CTO, CIO or Chief AI Officer seat can reach me on LinkedIn: https://www.linkedin.com/in/kunjarbhaduri/
 
 Booking: https://calendly.com/kunjarbhaduri/intro
 Lead form posts to /api/leads (no auto-email).
 Try-it: https://autonomy-ladder.io/assessment
+
