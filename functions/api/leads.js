@@ -12,6 +12,8 @@ const MAX = {
 };
 
 const INTERESTS = new Set([
+  "pe-tech-health",
+  "expert-call",
   "permanent",
   "interim",
   "fractional",
