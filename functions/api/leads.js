@@ -16,6 +16,7 @@ const INTERESTS = new Set([
   "interim",
   "fractional",
   "board",
+  "founder-advisory",
   "autonomy-ladder",
   "unsure",
 ]);
