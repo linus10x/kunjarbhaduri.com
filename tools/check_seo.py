@@ -59,6 +59,39 @@ class Page(HTMLParser):
             self.text.append(data)
 
 
+EXTRA_PAGES = [("work-with-me/index.html", "https://kunjarbhaduri.com/work-with-me/")]
+
+
+def check_extra_page(rel, url, sitemap):
+    path = ROOT / rel
+    if not path.exists():
+        fail(f"{rel} missing")
+        return
+    p = Page()
+    p.feed(path.read_text())
+    if not p.title.strip():
+        fail(f"{rel}: missing title")
+    desc = p.meta.get("description", "")
+    if not 50 <= len(desc) <= 170:
+        fail(f"{rel}: meta description length {len(desc)}")
+    if p.canonical != url:
+        fail(f"{rel}: canonical {p.canonical!r}")
+    for key in ("og:title", "og:description", "og:url", "twitter:card", "twitter:title", "twitter:description"):
+        if not p.meta.get(key):
+            fail(f"{rel}: missing {key}")
+    if not p.ld:
+        fail(f"{rel}: no JSON-LD")
+    for blob in p.ld:
+        try:
+            json.loads(blob)
+        except json.JSONDecodeError as e:
+            fail(f"{rel}: JSON-LD {e}")
+    if url not in sitemap:
+        fail(f"sitemap missing {url}")
+    if re.search("[\u2013\u2014]", " ".join(p.text)):
+        fail(f"{rel}: em or en dash in page copy")
+
+
 def main():
     raw = (ROOT / "index.html").read_text()
     p = Page()
@@ -95,8 +128,11 @@ def main():
     for bot in BOTS:
         if f"User-agent: {bot}\nAllow: /\n" not in robots:
             fail(f"robots.txt does not allow {bot}")
-    if "https://kunjarbhaduri.com/" not in (ROOT / "sitemap.xml").read_text():
+    sitemap = (ROOT / "sitemap.xml").read_text()
+    if "https://kunjarbhaduri.com/" not in sitemap:
         fail("sitemap missing home")
+    for rel, url in EXTRA_PAGES:
+        check_extra_page(rel, url, sitemap)
     llms = (ROOT / "llms.txt").read_text()
     full = (ROOT / "llms-full.txt").read_text()
     if "llms-full.txt" not in llms:
@@ -109,7 +145,7 @@ def main():
     if errors:
         print("\n".join(errors))
         return 1
-    print("all checks passed: 1 page")
+    print(f"all checks passed: {1 + len(EXTRA_PAGES)} pages")
     return 0
 
 
