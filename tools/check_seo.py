@@ -7,7 +7,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-BOTS = ["GPTBot", "ClaudeBot", "PerplexityBot", "Google-Extended"]
+BOTS = ["OAI-SearchBot", "Claude-SearchBot", "PerplexityBot", "Bingbot"]
 errors = []
 
 
