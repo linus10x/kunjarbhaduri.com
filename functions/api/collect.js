@@ -11,7 +11,8 @@
  * Privacy contract, enforced here:
  * - No cookies are set or read. No fingerprinting. Nothing IP-derived is
  *   stored: the client address is never read, hashed, or logged by us.
- * - Only five fields are stored: site, event, page, referrer, ts.
+ * - Stored fields: site, event, page, referrer, referrer host, utm tags,
+ *   door tag, coarse device class, ts. Nothing else is accepted.
  * - Origins are allowlisted to the five properties (apex and www).
  * - Events auto-expire from KV after 90 days.
  */
@@ -114,7 +115,36 @@ export async function onRequestPost(context) {
   if (!Number.isFinite(ts) || ts < now - 7 * 24 * 3600 * 1000 || ts > now + 3600 * 1000) {
     ts = now;
   }
-  const record = { site, event, page, referrer, ts };
+  const TAG_RX = /^[a-z0-9_\-\.]{0,64}$/i;
+  const tag = (v) => {
+    const t = clip(v, 64).toLowerCase();
+    return TAG_RX.test(t) ? t : "";
+  };
+  let ref = "";
+  if (referrer) {
+    try {
+      ref = new URL(referrer).hostname.slice(0, 120);
+    } catch {
+      ref = "";
+    }
+  }
+  const deviceRaw = clip(data && data.device, 16).toLowerCase();
+  const device = ["mobile", "tablet", "desktop"].includes(deviceRaw)
+    ? deviceRaw
+    : "";
+  const record = {
+    site,
+    event,
+    page,
+    referrer,
+    ref,
+    utm_source: tag(data && data.utm_source),
+    utm_medium: tag(data && data.utm_medium),
+    utm_campaign: tag(data && data.utm_campaign),
+    door: tag(data && data.door),
+    device,
+    ts,
+  };
   if (env.ANALYTICS) {
     const rand = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
     const key = `e:${site}:${dayOf(ts)}:${ts}:${rand}`;
