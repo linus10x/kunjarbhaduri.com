@@ -13,6 +13,14 @@
  *   stored: the client address is never read, hashed, or logged by us.
  * - Stored fields: site, event, page, referrer, referrer host, utm tags,
  *   door tag, coarse device class, ts. Nothing else is accepted.
+ * - Minimized server-side, whatever the client sends (desk-ops research
+ *   2026-11-08, kunjarbhaduri.com#26): page keeps the path only, with no
+ *   query or fragment, and /property/<id> plus id-like segments become "_";
+ *   referrer keeps the origin only (scheme and host), never path or query.
+ * - Every POST still answers 204 so no page can break, but the
+ *   x-collect-status header says stored, unbound or failed. A 204 alone is
+ *   not proof that an event was recorded. GET ?health=1 (read key) does a
+ *   real KV write-and-read round trip for monitoring.
  * - Origins are allowlisted to the five properties (apex and www).
  * - Events auto-expire from KV after 90 days.
  */
@@ -66,6 +74,59 @@ function originAllowed(request) {
   }
 }
 
+// Path segments that look like identifiers (long tokens with digits, UUIDs,
+// long hex) are replaced so private record IDs never reach analytics.
+const UUID_RX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function looksLikeId(seg) {
+  if (UUID_RX.test(seg)) return true;
+  // A readable slug ("dfw-foreclosure-sale-december-2026") is split into
+  // short words; an identifier has one long run that mixes in digits.
+  return seg.split(/[-_.]/).some((part) => part.length >= 12 && /\d/.test(part));
+}
+const PRIVATE_PREFIXES = ["property", "properties", "lead", "leads", "deal", "deals", "offer-review", "admin"];
+
+export function minimizePage(value) {
+  let page = typeof value === "string" ? value : "";
+  // Drop query and fragment no matter what the client sent.
+  page = page.split("#")[0].split("?")[0];
+  if (/^[a-z][a-z0-9+.\-]*:\/\//i.test(page)) {
+    try {
+      page = new URL(page).pathname;
+    } catch {
+      page = "/";
+    }
+  }
+  if (!page.startsWith("/")) page = "/" + page;
+  const segs = page.split("/");
+  for (let i = 1; i < segs.length; i++) {
+    const seg = segs[i];
+    if (!seg) continue;
+    let decoded = seg;
+    try {
+      decoded = decodeURIComponent(seg);
+    } catch {
+      decoded = seg;
+    }
+    if (/[@\s]/.test(decoded) || looksLikeId(decoded)) {
+      segs[i] = "_";
+    } else if (i > 1 && PRIVATE_PREFIXES.includes(segs[i - 1].toLowerCase())) {
+      segs[i] = "_";
+    }
+  }
+  return segs.join("/").slice(0, 200) || "/";
+}
+
+export function minimizeReferrer(value) {
+  if (typeof value !== "string" || !value) return "";
+  try {
+    const u = new URL(value.slice(0, 2000));
+    if (u.protocol !== "https:" && u.protocol !== "http:") return "";
+    return u.origin.slice(0, 160);
+  } catch {
+    return "";
+  }
+}
+
 function clip(value, n) {
   return typeof value === "string" ? value.slice(0, n) : "";
 }
@@ -100,16 +161,8 @@ export async function onRequestPost(context) {
   if (!SITE_IDS.has(site) || !EVENT_RX.test(event)) {
     return new Response(null, { status: 400, headers: cors });
   }
-  let page = clip(data && data.page, 200) || "/";
-  if (!page.startsWith("/")) page = "/" + page;
-  let referrer = clip(data && data.referrer, 300);
-  if (referrer) {
-    try {
-      new URL(referrer);
-    } catch {
-      referrer = "";
-    }
-  }
+  const page = minimizePage(data && data.page);
+  const referrer = minimizeReferrer(data && data.referrer);
   const now = Date.now();
   let ts = Number(data && data.ts);
   if (!Number.isFinite(ts) || ts < now - 7 * 24 * 3600 * 1000 || ts > now + 3600 * 1000) {
@@ -145,6 +198,7 @@ export async function onRequestPost(context) {
     device,
     ts,
   };
+  let status = "unbound";
   if (env.ANALYTICS) {
     const rand = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
     const key = `e:${site}:${dayOf(ts)}:${ts}:${rand}`;
@@ -152,11 +206,17 @@ export async function onRequestPost(context) {
       await env.ANALYTICS.put(key, JSON.stringify(record), {
         expirationTtl: RETENTION_TTL,
       });
+      status = "stored";
     } catch {
-      // Storage failure must never surface to the visitor's page.
+      // Storage failure must never surface to the visitor's page, but it
+      // must be visible to monitoring (header below, plus GET ?health=1).
+      status = "failed";
     }
   }
-  return new Response(null, { status: 204, headers: cors });
+  return new Response(null, {
+    status: 204,
+    headers: { ...cors, "x-collect-status": status, "access-control-expose-headers": "x-collect-status" },
+  });
 }
 
 export async function onRequestGet(context) {
@@ -181,6 +241,9 @@ export async function onRequestGet(context) {
     );
   }
   const url = new URL(request.url);
+  if (url.searchParams.get("health") === "1") {
+    return healthCheck(env);
+  }
   const day = url.searchParams.get("day") || dayOf(Date.now() - 24 * 3600 * 1000);
   if (!DAY_RX.test(day)) {
     return new Response(JSON.stringify({ ok: false, error: "bad day" }), {
@@ -214,6 +277,24 @@ export async function onRequestGet(context) {
   }
   events.sort((a, b) => a.ts - b.ts);
   return new Response(JSON.stringify({ ok: true, day, count: events.length, events }), {
+    headers: { "content-type": "application/json", "cache-control": "no-store" },
+  });
+}
+
+async function healthCheck(env) {
+  const key = `health:${Date.now()}:${crypto.randomUUID().slice(0, 8)}`;
+  const nonce = crypto.randomUUID();
+  const out = { ok: false, binding: true, write: false, read: false };
+  try {
+    await env.ANALYTICS.put(key, nonce, { expirationTtl: 60 });
+    out.write = true;
+    out.read = (await env.ANALYTICS.get(key)) === nonce;
+  } catch (e) {
+    out.error = "kv_error";
+  }
+  out.ok = out.write && out.read;
+  return new Response(JSON.stringify(out), {
+    status: out.ok ? 200 : 503,
     headers: { "content-type": "application/json", "cache-control": "no-store" },
   });
 }
