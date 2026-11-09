@@ -4,18 +4,28 @@
  * day's events as JSON for the daily digest (read key required).
  *
  * Bind a KV namespace as ANALYTICS in this Pages project (dashboard step;
- * see the analytics build report). Until the binding exists the endpoint
- * still answers 204 so no site ever breaks; events are simply not stored.
+ * see the analytics build report). Unbound or failed storage returns 503;
+ * clients already ignore measurement errors, so the page remains usable.
  * Optional: set the COLLECT_READ_KEY env var to enable the GET read path.
  *
  * Privacy contract, enforced here:
  * - No cookies are set or read. No fingerprinting. Nothing IP-derived is
  *   stored: the client address is never read, hashed, or logged by us.
- * - Stored fields: site, event, page, referrer, referrer host, utm tags,
- *   door tag, coarse device class, ts. Nothing else is accepted.
+ * - Page, event and attribution values use finite public vocabularies.
+ *   Referrers are fixed source categories, never arbitrary URLs/hosts.
  * - Origins are allowlisted to the five properties (apex and www).
  * - Events auto-expire from KV after 90 days.
  */
+
+import { PUBLIC_ROUTES, EVENTS, SOURCES, MEDIUMS, CAMPAIGNS } from "../../lib/analytics-policy.js";
+
+const EVENT_NAMES = new Set(EVENTS);
+const SOURCE_NAMES = new Set(SOURCES);
+const MEDIUM_NAMES = new Set(MEDIUMS);
+const CAMPAIGN_NAMES = new Set(CAMPAIGNS);
+const PUBLIC_PATHS = Object.fromEntries(
+  Object.entries(PUBLIC_ROUTES).map(([site, routes]) => [site, new Set(routes)])
+);
 
 const SITE_IDS = new Set([
   "readyestates",
@@ -38,7 +48,6 @@ const ALLOWED_ORIGINS = new Set([
   "https://www.autonomy-ladder.io",
 ]);
 
-const EVENT_RX = /^[a-z0-9_]{1,48}$/;
 const DAY_RX = /^\d{4}-\d{2}-\d{2}$/;
 const MAX_BODY = 4096;
 const RETENTION_TTL = 90 * 24 * 60 * 60; // 90 days, in seconds
@@ -74,6 +83,72 @@ function dayOf(ms) {
   return new Date(ms).toISOString().slice(0, 10); // UTC day bucket
 }
 
+function publicPage(site, value) {
+  if (typeof value !== "string" || value.length > MAX_BODY) return "/other/";
+  try {
+    // A foreign absolute URL is not a public route on this site.
+    const url = new URL(value, "https://analytics.invalid");
+    if (url.origin !== "https://analytics.invalid") return "/other/";
+    const path = decodeURIComponent(url.pathname).replace(/\/+$/, "") || "/";
+    if (/^\/property(?:\/|$)/i.test(path)) return "/property/";
+    return PUBLIC_PATHS[site]?.has(path) ? path : "/other/";
+  } catch {
+    return "/other/";
+  }
+}
+
+function approvedTag(value, allowed) {
+  if (typeof value !== "string") return "";
+  const token = value.toLowerCase();
+  return allowed.has(token) ? token : "";
+}
+
+function referrerCategory(value) {
+  if (!value) return "";
+  try {
+    const url = new URL(value);
+    if (!["http:", "https:"].includes(url.protocol)) return "";
+    const host = url.hostname.toLowerCase();
+    // Return only these fixed labels; even a personal subdomain is dropped.
+    for (const domain of [
+      "gemini.google.com", "google.com", "bing.com", "duckduckgo.com", "yahoo.com",
+      "linkedin.com", "facebook.com", "instagram.com", "pinterest.com",
+      "youtube.com", "github.com", "pypi.org", "chatgpt.com",
+      "perplexity.ai", "claude.ai", "copilot.microsoft.com",
+      "readyestates.us", "dfwreplydesk.com", "kunjarbhaduri.com",
+      "northtexascapitalinvestments.com", "autonomy-ladder.io",
+    ]) {
+      if (host === domain || host.endsWith("." + domain)) return domain;
+    }
+    return "other";
+  } catch {
+    return "";
+  }
+}
+
+function safeRecord(data, now = Date.now()) {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return null;
+  const site = data.site;
+  const event = data.event;
+  if (!SITE_IDS.has(site) || !EVENT_NAMES.has(event)) return null;
+  let ts = Number(data.ts);
+  if (!Number.isFinite(ts) || ts < now - 7 * 24 * 3600 * 1000 || ts > now + 3600 * 1000) ts = now;
+  const ref = referrerCategory(data.referrer);
+  return {
+    site,
+    event,
+    page: publicPage(site, data.page || "/"),
+    referrer: ref && ref !== "other" ? "https://" + ref : "",
+    ref,
+    utm_source: approvedTag(data.utm_source, SOURCE_NAMES),
+    utm_medium: approvedTag(data.utm_medium, MEDIUM_NAMES),
+    utm_campaign: approvedTag(data.utm_campaign, CAMPAIGN_NAMES),
+    door: approvedTag(data.door, SOURCE_NAMES),
+    device: ["mobile", "tablet", "desktop"].includes(data.device) ? data.device : "",
+    ts,
+  };
+}
+
 export async function onRequestPost(context) {
   const { request, env } = context;
   const cors = corsHeaders(request);
@@ -95,66 +170,22 @@ export async function onRequestPost(context) {
   } catch {
     return new Response(null, { status: 400, headers: cors });
   }
-  const site = clip(data && data.site, 32);
-  const event = clip(data && data.event, 48);
-  if (!SITE_IDS.has(site) || !EVENT_RX.test(event)) {
+  const record = safeRecord(data);
+  if (!record) {
     return new Response(null, { status: 400, headers: cors });
   }
-  let page = clip(data && data.page, 200) || "/";
-  if (!page.startsWith("/")) page = "/" + page;
-  let referrer = clip(data && data.referrer, 300);
-  if (referrer) {
-    try {
-      new URL(referrer);
-    } catch {
-      referrer = "";
-    }
-  }
-  const now = Date.now();
-  let ts = Number(data && data.ts);
-  if (!Number.isFinite(ts) || ts < now - 7 * 24 * 3600 * 1000 || ts > now + 3600 * 1000) {
-    ts = now;
-  }
-  const TAG_RX = /^[a-z0-9_\-\.]{0,64}$/i;
-  const tag = (v) => {
-    const t = clip(v, 64).toLowerCase();
-    return TAG_RX.test(t) ? t : "";
-  };
-  let ref = "";
-  if (referrer) {
-    try {
-      ref = new URL(referrer).hostname.slice(0, 120);
-    } catch {
-      ref = "";
-    }
-  }
-  const deviceRaw = clip(data && data.device, 16).toLowerCase();
-  const device = ["mobile", "tablet", "desktop"].includes(deviceRaw)
-    ? deviceRaw
-    : "";
-  const record = {
-    site,
-    event,
-    page,
-    referrer,
-    ref,
-    utm_source: tag(data && data.utm_source),
-    utm_medium: tag(data && data.utm_medium),
-    utm_campaign: tag(data && data.utm_campaign),
-    door: tag(data && data.door),
-    device,
-    ts,
-  };
   if (env.ANALYTICS) {
     const rand = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
-    const key = `e:${site}:${dayOf(ts)}:${ts}:${rand}`;
+    const key = `e:${record.site}:${dayOf(record.ts)}:${record.ts}:${rand}`;
     try {
       await env.ANALYTICS.put(key, JSON.stringify(record), {
         expirationTtl: RETENTION_TTL,
       });
     } catch {
-      // Storage failure must never surface to the visitor's page.
+      return new Response(null, { status: 503, headers: cors });
     }
+  } else {
+    return new Response(null, { status: 503, headers: cors });
   }
   return new Response(null, { status: 204, headers: cors });
 }
@@ -204,7 +235,11 @@ export async function onRequestGet(context) {
         const v = await env.ANALYTICS.get(k.name);
         if (!v) continue;
         try {
-          events.push(JSON.parse(v));
+          const stored = JSON.parse(v);
+          // Minimize legacy read output too. This does not rewrite old KV rows.
+          const storedTime = Number(stored && stored.ts);
+          const record = safeRecord(stored, Number.isFinite(storedTime) ? storedTime : Date.now());
+          if (record) events.push(record);
         } catch {
           // skip a corrupt record rather than failing the whole read
         }
@@ -226,3 +261,4 @@ export async function onRequestOptions(context) {
   headers["access-control-max-age"] = "86400";
   return new Response(null, { status: 204, headers });
 }
+
