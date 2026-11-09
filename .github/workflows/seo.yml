@@ -15,3 +15,5 @@ jobs:
       - uses: actions/checkout@v4
       - name: SEO and AI crawl files
         run: python3 tools/check_seo.py
+      - name: Collector tests
+        run: node tests/collect.test.mjs
