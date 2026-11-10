@@ -1,6 +1,10 @@
 /**
- * POST /api/leads — store a contact lead. No email is sent.
+ * POST /api/leads — store a contact lead, then (optionally) tell the owner.
  * Bind Cloudflare Pages LEADS (KV) or DB (D1). Otherwise 503.
+ * Optional: service binding LEAD_NOTIFY -> the internal lead-notify Worker
+ * (linus10x/desk-ops systems/lead-notify). It emails the owner's verified
+ * inbox after the lead is stored. Storage stays the source of truth: a
+ * notification failure never changes the visitor's response.
  */
 
 const MAX = {
@@ -12,10 +16,13 @@ const MAX = {
 };
 
 const INTERESTS = new Set([
+  "pe-tech-health",
+  "expert-call",
   "permanent",
   "interim",
   "fractional",
   "board",
+  "founder-advisory",
   "autonomy-ladder",
   "unsure",
 ]);
@@ -44,6 +51,33 @@ function clip(value, n) {
   return String(value || "")
     .trim()
     .slice(0, n);
+}
+
+function notifyOwner(context, record) {
+  const svc = context.env && context.env.LEAD_NOTIFY;
+  if (!svc || typeof svc.fetch !== "function") return false;
+  const body = JSON.stringify({
+    site: "kunjarbhaduri.com",
+    kind: "advisory inquiry",
+    id: record.id,
+    created_at: record.created_at,
+    fields: {
+      name: record.name,
+      email: record.email,
+      interest: record.interest,
+      notes: record.notes,
+      source: record.source,
+    },
+  });
+  const p = svc
+    .fetch("https://lead-notify/", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body,
+    })
+    .catch(() => null);
+  if (typeof context.waitUntil === "function") context.waitUntil(p);
+  return true;
 }
 
 export async function onRequestPost(context) {
@@ -86,6 +120,7 @@ export async function onRequestPost(context) {
       await env.LEADS.put(`lead:${id}`, JSON.stringify(record), {
         metadata: { interest, created_at },
       });
+      notifyOwner(context, record);
       return ok(id);
     }
     if (env.DB) {
@@ -95,6 +130,7 @@ export async function onRequestPost(context) {
       )
         .bind(id, created_at, name, email, interest, notes, source)
         .run();
+      notifyOwner(context, record);
       return ok(id);
     }
   } catch {

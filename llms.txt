@@ -1,33 +1,28 @@
 # Kunjar Bhaduri
 
-> Kunjar Bhaduri, CTO, CIO and Chief AI Officer for financial services and PE-backed companies. Interim, fractional or permanent. Dallas, Texas.
+> Kunjar Bhaduri, CTO, CIO and Chief AI Officer for financial services and PE-backed companies. Interim, fractional or permanent. Also Bhaduri Advisory: strategy, operations and technology for founders in Dallas-Fort Worth. Dallas, Texas.
 
 Site: https://kunjarbhaduri.com/
 Full page text: https://kunjarbhaduri.com/llms-full.txt
-The only page in this repo today is the home page. The track-record section on that page is the source for any figure. This file does not restate those figures.
+The site has two pages: the home page and Work with me. The track-record section on the home page is the source for any figure. This file does not restate those figures.
 
 ## Pages
 
-- [Home](https://kunjarbhaduri.com/): the thesis line is "Technology turnarounds for financial services and PE-backed companies." The Ways to work together section covers fractional, interim, full time, board, advisory and expert network calls. Contact is email, LinkedIn, or Calendly.
-
-## Ways to work together
-
-Each option books the same intro call: https://calendly.com/kunjarbhaduri/intro
-
-- Fractional technology leadership
-- Interim technology leadership
-- Full time CTO, CIO or Chief AI Officer
-- Board technology work
-- Advisory work
-- Expert network calls (hourly rate on request)
+- [Home](https://kunjarbhaduri.com/): the thesis line is "Technology turnarounds for financial services and PE-backed companies." The page also carries Bhaduri Advisory, his practice for founders in Dallas-Fort Worth: company strategy and go-to-market, running the business day to day, hiring and keeping good people, and technology, product and AI. Its service lines cover software companies building fast with AI (an experienced review of architecture, security and delivery, including AI-written code), companies training AI and analytics models (data checks, model testing and monitoring, and getting to a first customer pilot), and founders who need a business operator, fractional or interim. Engagements start with a focused review (two weeks, fixed fee) or a defined project, and can grow into a fractional retainer billed monthly or a project or interim role. Open to equity for the right founder and business. Contact is the LinkedIn profile linked from the page, Calendly, or the lead form on the page (Interest: Founder / advisory).
+- [Work with me](https://kunjarbhaduri.com/work-with-me/): five offers, each with who it is for, what you get, timeline and how to start.
+  - Tech Health snapshot for private equity portfolio companies: a read-only review of systems, access, backups and recovery, vendors and code, a Tech Health Index score from 0 to 100, and a written readout for the sponsor and CEO. About three weeks. Fixed fee, quoted after a 15-minute call. Optional quarterly portfolio monitoring (per company per month) and a CTO on call retainer.
+  - Fractional or interim CTO, CIO or Chief AI Officer for PE-backed and financial services companies, starting with a 100-day plan.
+  - Expert calls and short consulting projects for investors, consultants and corporate development teams. Hourly rate on request. No confidential employer or client information, and no calls that conflict with a current engagement.
+  - AI governance advisory and advisory boards, using the Autonomy Ladder A0 to A4 framework. A governance review of one system takes about two weeks. The ladder does not establish regulatory compliance or replace model validation.
+  - Founder advisory through Bhaduri Advisory, as described on the home page.
 
 ## Not in this file
 
 - No street address.
 - Draft PR #1 on this repo is a separate essays hub and is not this change.
+- The Bhaduri Advisory founder copy went live on 2026-11-04.
 
 ## Contact
 
-- Email: kunjarbhaduri@gmail.com
 - LinkedIn: https://www.linkedin.com/in/kunjarbhaduri/
 - Book 15 minutes: https://calendly.com/kunjarbhaduri/intro
