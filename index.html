@@ -251,7 +251,7 @@ footer{padding-block:24px 40px;color:var(--muted);font-size:13px}
 
   <section class="contact" aria-labelledby="h-contact">
     <h2 id="h-contact">Contact</h2>
-    <p>Recruiters, search partners, sponsors and executives hiring for a CTO, CIO or Chief AI Officer seat can book fifteen minutes or reach me on LinkedIn. Prefer a stored request without a calendar invite? Use the form below. It posts to /api/leads and does not send mail automatically.</p>
+    <p>Recruiters, search partners, sponsors and executives hiring for a CTO, CIO or Chief AI Officer seat can book a short call or reach me on LinkedIn. If you'd rather write first, use the form below. It comes to my own inbox, and I reply by email.</p>
     <p class="cta-row">
       <a class="cta" href="https://calendly.com/kunjarbhaduri/intro" data-event="cta_book_contact">Book 15 minutes</a>
       <a class="cta cta-secondary" href="https://www.linkedin.com/in/kunjarbhaduri/" data-event="cta_linkedin_contact">Contact me on LinkedIn</a>
@@ -277,9 +277,11 @@ footer{padding-block:24px 40px;color:var(--muted);font-size:13px}
       </select>
       <label for="notes">Notes (optional)</label>
       <textarea id="notes" name="notes" rows="3" maxlength="1000"></textarea>
-      <button class="cta" type="submit" data-event="cta_leads_submit">Store the request</button>
+      <button class="cta" type="submit" data-event="cta_leads_submit">Send</button>
     </form>
-    <p style="margin-top:12px;font-size:14px;color:var(--muted)">This form goes straight to Kunjar. If you would rather book a call, the Calendly link is above. No Stripe products are sold from this page.</p>
+    <p id="lead-sent" role="status" hidden style="margin-top:12px">Thank you. Your note came through, and I'll reply by email.</p>
+    <p style="margin-top:12px;font-size:14px;color:var(--muted)">What you send is used only to reply to you. It isn't added to a mailing list or passed to anyone else. No Stripe products are sold from this page.</p>
+    <script>try{if(new URLSearchParams(location.search).get("lead")){document.getElementById("lead-sent").hidden=false;history.replaceState(null,"",location.pathname+location.hash);}}catch(e){}</script>
   </section>
 </main>
 
