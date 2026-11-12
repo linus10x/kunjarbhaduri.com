@@ -60,6 +60,7 @@ Founders can book 15 minutes, or use the lead form on the page and choose Founde
 Work with me: five offers (PE Tech Health snapshot, fractional or interim CTO, CIO or Chief AI Officer, expert calls, AI governance advisory and advisory boards, founder advisory) are listed on the home page and described in full at https://kunjarbhaduri.com/work-with-me/
 
 Booking: https://calendly.com/kunjarbhaduri/intro
+Email: kunjar@northtexascapitalinvestments.com
 Lead form posts to /api/leads (no auto-email).
 Try-it: https://autonomy-ladder.io/assessment
 
