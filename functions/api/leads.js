@@ -5,6 +5,13 @@
  * (linus10x/desk-ops systems/lead-notify). It emails the owner's verified
  * inbox after the lead is stored. Storage stays the source of truth: a
  * notification failure never changes the visitor's response.
+ *
+ * Spam screen (no external service): a hidden honeypot field, a minimum
+ * time on page, and two soft content signals. Suspected spam gets the same
+ * 303 as a real lead, so bots learn nothing. It is kept under `spam:<id>`
+ * (KV, 30-day TTL, metadata spam=1) and never sent to LEAD_NOTIFY, so
+ * `lead:` counts stay clean. With D1 only, spam is dropped, because the
+ * leads table has no spam column and adding one is a schema change.
  */
 
 const MAX = {
@@ -45,6 +52,33 @@ function ok(id) {
       "cache-control": "no-store",
     },
   });
+}
+
+const MIN_FILL_MS = 3000; // a person can't pick an interest and submit faster
+const SPAM_TTL_S = 60 * 60 * 24 * 30;
+
+/**
+ * Returns the reasons a submission looks automated ([] = looks human).
+ * Hard signals: honeypot filled; submitted under MIN_FILL_MS after page load.
+ * Soft signals (spam only when both fire): notes contain letters but none
+ * are Latin; name is one CamelCase token like "RobertLot".
+ * A missing or garbled timestamp (no JavaScript) is never counted against
+ * the visitor.
+ */
+export function spamReasons(data, now = Date.now()) {
+  const hard = [];
+  if (String(data.website || "").trim() !== "") hard.push("honeypot");
+  const ts = Number(data.ts);
+  if (Number.isFinite(ts) && ts > 0 && now - ts >= 0 && now - ts < MIN_FILL_MS) {
+    hard.push("too_fast");
+  }
+  if (hard.length) return hard;
+
+  const soft = [];
+  const notes = String(data.notes || "");
+  if (/\p{L}/u.test(notes) && !/\p{Script=Latin}/u.test(notes)) soft.push("non_latin_notes");
+  if (/^[A-Z][a-z]+[A-Z][a-z]+$/.test(String(data.name || "").trim())) soft.push("camelcase_name");
+  return soft.length >= 2 ? soft : [];
 }
 
 function clip(value, n) {
@@ -114,6 +148,25 @@ export async function onRequestPost(context) {
   const id = crypto.randomUUID();
   const created_at = new Date().toISOString();
   const record = { id, created_at, name, email, interest, notes, source };
+
+  const reasons = spamReasons(data);
+  if (reasons.length) {
+    try {
+      if (env.LEADS) {
+        await env.LEADS.put(
+          `spam:${id}`,
+          JSON.stringify({ ...record, spam: 1, reasons }),
+          {
+            expirationTtl: SPAM_TTL_S,
+            metadata: { interest, created_at, spam: 1, reasons: reasons.join(",") },
+          }
+        );
+      }
+    } catch {
+      // Spam storage is best-effort; the bot still gets the normal response.
+    }
+    return ok(id);
+  }
 
   try {
     if (env.LEADS) {
