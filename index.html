@@ -91,6 +91,7 @@ footer{padding-block:24px 40px;color:var(--muted);font-size:13px}
 .lead-form label{display:block;font-size:13px;font-weight:600;margin:0 0 6px}
 .lead-form input,.lead-form select,.lead-form textarea{width:100%;max-width:28rem;padding:10px 12px;margin:0 0 14px;border:1px solid var(--rule);border-radius:4px;font:inherit;background:var(--panel);color:var(--ink)}
 .lead-form button{font:inherit;cursor:pointer;border:0}
+.lead-form .hp{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
 .mast .proof-strip{border-top-color:rgba(244,242,236,.15)}
 </style>
 <script>
@@ -259,6 +260,8 @@ footer{padding-block:24px 40px;color:var(--muted);font-size:13px}
     <p>Email: <a href="mailto:kunjar@northtexascapitalinvestments.com" data-event="cta_email_contact">kunjar@northtexascapitalinvestments.com</a></p>
     <form class="lead-form" method="post" action="/api/leads" accept-charset="utf-8" style="margin-top:20px">
       <input type="hidden" name="source" value="kunjarbhaduri-com">
+      <input type="hidden" name="ts" id="lead-ts" value="">
+      <div class="hp" aria-hidden="true"><label for="website">Leave this empty</label><input id="website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
       <label for="name">Name</label>
       <input id="name" name="name" type="text" maxlength="120" autocomplete="name">
       <label for="email">Email</label>
@@ -282,6 +285,7 @@ footer{padding-block:24px 40px;color:var(--muted);font-size:13px}
     </form>
     <p id="lead-sent" role="status" hidden style="margin-top:12px">Thank you. Your note came through, and I'll reply by email.</p>
     <p style="margin-top:12px;font-size:14px;color:var(--muted)">What you send is used only to reply to you. It isn't added to a mailing list or passed to anyone else. No Stripe products are sold from this page.</p>
+    <script>try{document.getElementById("lead-ts").value=String(Date.now());}catch(e){}</script>
     <script>try{if(new URLSearchParams(location.search).get("lead")){document.getElementById("lead-sent").hidden=false;history.replaceState(null,"",location.pathname+location.hash);}}catch(e){}</script>
   </section>
 </main>

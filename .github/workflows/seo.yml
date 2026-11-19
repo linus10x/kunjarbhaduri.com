@@ -17,3 +17,5 @@ jobs:
         run: python3 tools/check_seo.py
       - name: Collector tests
         run: node tests/collect.test.mjs
+      - name: Lead form tests
+        run: node tests/leads.test.mjs
