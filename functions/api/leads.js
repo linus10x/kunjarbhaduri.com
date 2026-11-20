@@ -56,6 +56,8 @@ function ok(id) {
 
 const MIN_FILL_MS = 3000; // a person can't pick an interest and submit faster
 const SPAM_TTL_S = 60 * 60 * 24 * 30;
+const RESEND_TTL_S = 60 * 60 * 24; // a sender flagged once stays flagged for a day
+const resendKey = (email) => `spamsender:${String(email || "").toLowerCase()}`;
 // Phrases sellers paste into contact forms. Lowercase; matched as substrings.
 const PITCH_PHRASES = [
   "through your contact form",
@@ -177,6 +179,16 @@ export async function onRequestPost(context) {
   const record = { id, created_at, name, email, interest, notes, source };
 
   const reasons = spamReasons(data);
+  // 2026-11-20 (NTCI): a pitch caught by the honeypot came back 8 s later
+  // from the same address with an empty note and got through. Same sender
+  // within a day of a spam flag = spam. A failed lookup never blocks a lead.
+  if (!reasons.length && env.LEADS && typeof env.LEADS.get === "function") {
+    try {
+      if (await env.LEADS.get(resendKey(email))) reasons.push("repeat_after_spam");
+    } catch {
+      // best-effort
+    }
+  }
   if (reasons.length) {
     try {
       if (env.LEADS) {
@@ -191,6 +203,13 @@ export async function onRequestPost(context) {
       }
     } catch {
       // Spam storage is best-effort; the bot still gets the normal response.
+    }
+    try {
+      if (env.LEADS) {
+        await env.LEADS.put(resendKey(email), "1", { expirationTtl: RESEND_TTL_S });
+      }
+    } catch {
+      // best-effort
     }
     return ok(id);
   }
