@@ -73,4 +73,12 @@ function kv() { const m = new Map(); const opts = new Map(); return { m, opts, p
 { let inserted = 0; const DB = { prepare: () => ({ bind: () => ({ run: async () => { inserted++; } }) }) };
   const r = await onRequestPost({ request: form({ ...good, website: "x" }), env: { DB } });
   assert.equal(r.status, 303); assert.equal(inserted, 0); }
+// 11. the 2026-11-20 vendor-pitch template: spam alone, no notify; one phrase alone is still a lead
+{ const pitch = "Hi team,\r\n\r\nThis note arrived through your contact form. Picture I'm a new customer: how soon until I hear back?\r\n\r\nAn MIT study showed that a lead called within 5 minutes is 100 times more likely to be reached. We make that call for you.";
+  assert.deepEqual(spamReasons({ name: "Pat Jones", notes: pitch }), ["vendor_pitch"]);
+  const LEADS = kv(); const calls = [];
+  const r = await onRequestPost({ request: form({ ...good, interest: "board", notes: pitch }), env: { LEADS, LEAD_NOTIFY: { fetch: async () => calls.push(1) } } });
+  assert.equal(r.status, 303); assert.equal(calls.length, 0); assert.ok([...LEADS.m.keys()][0].startsWith("spam:"));
+  assert.deepEqual(spamReasons({ name: "Pat", notes: "We want a free trial of a tech health snapshot for one portfolio company" }), []);
+  assert.deepEqual(spamReasons({ name: "Pat", notes: "Operating partner, 6 portfolio companies; our AI vendor stack needs a review" }), []); }
 console.log("leads: all tests passed");

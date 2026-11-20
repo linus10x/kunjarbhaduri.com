@@ -56,10 +56,34 @@ function ok(id) {
 
 const MIN_FILL_MS = 3000; // a person can't pick an interest and submit faster
 const SPAM_TTL_S = 60 * 60 * 24 * 30;
+// Phrases sellers paste into contact forms. Lowercase; matched as substrings.
+const PITCH_PHRASES = [
+  "through your contact form",
+  "via your contact form",
+  "through your contact page",
+  "mit study",
+  "times more likely",
+  "we call them",
+  "we make that call",
+  "book a demo",
+  "free trial",
+  "unsubscribe",
+  "reply stop",
+  "opt out",
+  "opt-out",
+  "no longer wish to receive",
+  "guest post",
+  "backlinks",
+  "first page of google",
+  "more leads",
+];
 
 /**
  * Returns the reasons a submission looks automated ([] = looks human).
  * Hard signals: honeypot filled; submitted under MIN_FILL_MS after page load.
+ * Vendor pitch: notes contain 2+ distinct cold-pitch phrases (PITCH_PHRASES),
+ * e.g. the 2026-11-20 "lead-calling service" template. One phrase alone is
+ * never enough, so a real buyer who mentions "our AI" is still a lead.
  * Soft signals (spam only when both fire): notes contain letters but none
  * are Latin; name is one CamelCase token like "RobertLot".
  * A missing or garbled timestamp (no JavaScript) is never counted against
@@ -72,6 +96,9 @@ export function spamReasons(data, now = Date.now()) {
   if (Number.isFinite(ts) && ts > 0 && now - ts >= 0 && now - ts < MIN_FILL_MS) {
     hard.push("too_fast");
   }
+  const lower = String(data.notes || "").toLowerCase();
+  const pitchHits = PITCH_PHRASES.filter((p) => lower.includes(p)).length;
+  if (pitchHits >= 2) hard.push("vendor_pitch");
   if (hard.length) return hard;
 
   const soft = [];
