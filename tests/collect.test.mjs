@@ -62,6 +62,14 @@ await t("foreign origin rejected", async () => {
   const res = await onRequestPost({ request: post({ site: "ntci", event: "page_view", page: "/" }, "https://evil.invalid"), env: { ANALYTICS: kv() } });
   assert.equal(res.status, 403);
 });
+await t("foreclosurepreventionauthority.org origin accepted", async () => {
+  for (const o of ["https://foreclosurepreventionauthority.org", "https://www.foreclosurepreventionauthority.org"]) {
+    const res = await onRequestPost({ request: post({ site: "readyestates", event: "page_view", page: "/" }, o), env: { ANALYTICS: kv() } });
+    assert.equal(res.status, 204);
+    assert.equal(res.headers.get("x-collect-status"), "stored");
+    assert.equal(res.headers.get("access-control-allow-origin"), o);
+  }
+});
 await t("health round trip", async () => {
   const req = (h) => new Request("https://kunjarbhaduri.com/api/collect?health=1", { headers: h });
   assert.equal((await onRequestGet({ request: req({ "x-read-key": "k" }), env: { COLLECT_READ_KEY: "k", ANALYTICS: kv() } })).status, 200);
