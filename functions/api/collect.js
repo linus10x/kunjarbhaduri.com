@@ -33,6 +33,7 @@ const SITE_IDS = new Set([
   "kunjarbhaduri",
   "ntci",
   "autonomy",
+  "keptclose",
 ]);
 
 const ALLOWED_ORIGINS = new Set([
@@ -46,6 +47,8 @@ const ALLOWED_ORIGINS = new Set([
   "https://www.northtexascapitalinvestments.com",
   "https://autonomy-ladder.io",
   "https://www.autonomy-ladder.io",
+  "https://keptcloseportraits.com",
+  "https://www.keptcloseportraits.com",
 ]);
 
 const EVENT_RX = /^[a-z0-9_]{1,48}$/;
