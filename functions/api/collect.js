@@ -49,6 +49,9 @@ const ALLOWED_ORIGINS = new Set([
   "https://www.autonomy-ladder.io",
   "https://keptcloseportraits.com",
   "https://www.keptcloseportraits.com",
+  // Standalone since the 2026-11-18 cutover; its pages post site "readyestates".
+  "https://foreclosurepreventionauthority.org",
+  "https://www.foreclosurepreventionauthority.org",
 ]);
 
 const EVENT_RX = /^[a-z0-9_]{1,48}$/;
