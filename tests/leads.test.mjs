@@ -43,7 +43,7 @@ function kv() { const m = new Map(); const opts = new Map(); return { m, opts, p
 { const LEADS = kv(); const calls = [];
   const r = await onRequestPost({ request: form({ ...good, website: "http://x.example" }), env: { LEADS, LEAD_NOTIFY: { fetch: async () => calls.push(1) } } });
   assert.equal(r.status, 303); assert.equal(calls.length, 0);
-  const keys = [...LEADS.m.keys()];
+  const keys = [...LEADS.m.keys()].filter((k) => !k.startsWith("spamsender:"));
   assert.equal(keys.length, 1); assert.ok(keys[0].startsWith("spam:"));
   const o = LEADS.opts.get(keys[0]); assert.equal(o.metadata.spam, 1); assert.equal(o.expirationTtl, 2592000); }
 
@@ -73,4 +73,30 @@ function kv() { const m = new Map(); const opts = new Map(); return { m, opts, p
 { let inserted = 0; const DB = { prepare: () => ({ bind: () => ({ run: async () => { inserted++; } }) }) };
   const r = await onRequestPost({ request: form({ ...good, website: "x" }), env: { DB } });
   assert.equal(r.status, 303); assert.equal(inserted, 0); }
+// 11. the 2026-11-20 vendor-pitch template: spam alone, no notify; one phrase alone is still a lead
+{ const pitch = "Hi team,\r\n\r\nThis note arrived through your contact form. Picture I'm a new customer: how soon until I hear back?\r\n\r\nAn MIT study showed that a lead called within 5 minutes is 100 times more likely to be reached. We make that call for you.";
+  assert.deepEqual(spamReasons({ name: "Pat Jones", notes: pitch }), ["vendor_pitch"]);
+  const LEADS = kv(); const calls = [];
+  const r = await onRequestPost({ request: form({ ...good, interest: "board", notes: pitch }), env: { LEADS, LEAD_NOTIFY: { fetch: async () => calls.push(1) } } });
+  assert.equal(r.status, 303); assert.equal(calls.length, 0); assert.ok([...LEADS.m.keys()][0].startsWith("spam:"));
+  assert.deepEqual(spamReasons({ name: "Pat", notes: "We want a free trial of a tech health snapshot for one portfolio company" }), []);
+  assert.deepEqual(spamReasons({ name: "Pat", notes: "Operating partner, 6 portfolio companies; our AI vendor stack needs a review" }), []); }
+// 12. repeat_after_spam: honeypot hit, then a clean resend from the same address (any case) within a day = spam, no notify
+{ const m = new Map(); const opts = new Map();
+  const LEADS = { m, opts, put: async (k, v, o) => { m.set(k, v); opts.set(k, o); }, get: async (k) => m.get(k) ?? null };
+  const calls = []; const LEAD_NOTIFY = { fetch: async () => calls.push(1) };
+  await onRequestPost({ request: form({ ...good, website: "http://x.example" }), env: { LEADS, LEAD_NOTIFY } });
+  assert.equal(opts.get("spamsender:pat@example.com").expirationTtl, 86400);
+  const r = await onRequestPost({ request: form({ ...good, email: "PAT@example.com", notes: "" }), env: { LEADS, LEAD_NOTIFY } });
+  assert.equal(r.status, 303); assert.equal(calls.length, 0);
+  assert.equal([...m.keys()].filter((k) => k.startsWith("lead:")).length, 0);
+  const second = [...m.keys()].filter((k) => k.startsWith("spam:"))[1];
+  assert.equal(opts.get(second).metadata.reasons, "repeat_after_spam");
+  // a different sender is untouched
+  const r2 = await onRequestPost({ request: form({ ...good, email: "someone@else.com" }), env: { LEADS, LEAD_NOTIFY } });
+  assert.equal(r2.status, 303); assert.equal([...m.keys()].filter((k) => k.startsWith("lead:")).length, 1); }
+// 13. a KV get that throws never blocks a real lead
+{ const m = new Map(); const LEADS = { m, put: async (k, v) => { m.set(k, v); }, get: async () => { throw new Error("kv"); } };
+  const r = await onRequestPost({ request: form(good), env: { LEADS } });
+  assert.equal(r.status, 303); assert.ok([...m.keys()][0].startsWith("lead:")); }
 console.log("leads: all tests passed");
