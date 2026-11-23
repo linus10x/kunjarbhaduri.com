@@ -99,9 +99,9 @@ footer{padding-block:24px 40px;color:var(--muted);font-size:13px}
 /* First-party, cookieless beacon to this site's own /api/collect (site id "kunjarbhaduri"). Sends event, path, referrer, utm tags and a coarse device class only; the collector minimizes again server-side. */
 function b(n){try{if(!/^[a-z0-9_]{1,48}$/.test(n))return;var s=new URLSearchParams(location.search),u=navigator.userAgent||"",d=JSON.stringify({site:"kunjarbhaduri",event:n,page:location.pathname,referrer:document.referrer||"",utm_source:(s.get("utm_source")||"").slice(0,64),utm_medium:(s.get("utm_medium")||"").slice(0,64),utm_campaign:(s.get("utm_campaign")||"").slice(0,64),door:(s.get("utm_source")||"").slice(0,64),device:/iPad|Tablet/i.test(u)?"tablet":(/Mobi|Android|iPhone/i.test(u)?"mobile":"desktop"),ts:Date.now()});if(navigator.sendBeacon&&navigator.sendBeacon("/api/collect",new Blob([d],{type:"text/plain"})))return;fetch("/api/collect",{method:"POST",body:d,headers:{"Content-Type":"text/plain"},keepalive:true}).catch(function(){})}catch(e){}}
 function t(n,p){if(!n)return;q.push({name:String(n),t:Date.now(),path:location.pathname,props:p||{}});b(String(n))}window.kbTrack=t;
-t("ba_visit");
+t("page_view");
 document.addEventListener("click",function(e){var n=e.target;while(n&&n!==document&&!(n.getAttribute&&n.getAttribute("data-event"))){n=n.parentNode}if(!n||n===document)return;t(n.getAttribute("data-event"),{href:n.getAttribute("href")||""})},true);
-document.addEventListener("submit",function(e){var f=e.target;if(f&&f.classList&&f.classList.contains("lead-form"))t("ba_form_submit")},true)})();
+document.addEventListener("submit",function(e){var f=e.target;if(f&&f.classList&&f.classList.contains("lead-form"))t("lead_submit")},true)})();
 </script>
 </head>
 <body>
