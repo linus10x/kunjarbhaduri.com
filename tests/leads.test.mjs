@@ -100,3 +100,10 @@ function kv() { const m = new Map(); const opts = new Map(); return { m, opts, p
   const r = await onRequestPost({ request: form(good), env: { LEADS } });
   assert.equal(r.status, 303); assert.ok([...m.keys()][0].startsWith("lead:")); }
 console.log("leads: all tests passed");
+
+// 2026-11-23: the CamelCase campaign switched to an English template.
+{ assert.deepEqual(spamReasons({ name: "RobertLot", notes: "Hi, I wanted to know your price." }), ["camelcase_name", "price_template"]);
+  assert.deepEqual(spamReasons({ name: "Robert Lot", notes: "Hi, I wanted to know your price." }), []);
+  assert.deepEqual(spamReasons({ name: "Dana", notes: "Hi, I wanted to know your price for a 3-company snapshot." }), []);
+  console.log("ok price_template soft signal");
+}

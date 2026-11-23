@@ -80,14 +80,20 @@ const PITCH_PHRASES = [
   "more leads",
 ];
 
+// Whole-message match only: the bot's note is one short line and nothing else.
+const PRICE_TEMPLATE = /^(hi|hello|hey)?[,!. ]*i (wanted|want|would like) to know your price[.!?]*$/i;
+
 /**
  * Returns the reasons a submission looks automated ([] = looks human).
  * Hard signals: honeypot filled; submitted under MIN_FILL_MS after page load.
  * Vendor pitch: notes contain 2+ distinct cold-pitch phrases (PITCH_PHRASES),
  * e.g. the 2026-11-20 "lead-calling service" template. One phrase alone is
  * never enough, so a real buyer who mentions "our AI" is still a lead.
- * Soft signals (spam only when both fire): notes contain letters but none
- * are Latin; name is one CamelCase token like "RobertLot".
+ * Soft signals (spam only when two fire): notes contain letters but none
+ * are Latin; name is one CamelCase token like "RobertLot"; notes are the
+ * short "I wanted to know your price" template that campaign rotates into
+ * English (seen 2026-11-23 06:03 CT). A real visitor asking about price
+ * trips only one soft signal and stays a lead.
  * A missing or garbled timestamp (no JavaScript) is never counted against
  * the visitor.
  */
@@ -107,6 +113,7 @@ export function spamReasons(data, now = Date.now()) {
   const notes = String(data.notes || "");
   if (/\p{L}/u.test(notes) && !/\p{Script=Latin}/u.test(notes)) soft.push("non_latin_notes");
   if (/^[A-Z][a-z]+[A-Z][a-z]+$/.test(String(data.name || "").trim())) soft.push("camelcase_name");
+  if (PRICE_TEMPLATE.test(notes.trim())) soft.push("price_template");
   return soft.length >= 2 ? soft : [];
 }
 
