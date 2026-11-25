@@ -110,6 +110,7 @@ t("page_view");
 document.addEventListener("click",function(e){var n=e.target;while(n&&n!==document&&!(n.getAttribute&&n.getAttribute("data-event"))){n=n.parentNode}if(!n||n===document)return;t(n.getAttribute("data-event"),{href:n.getAttribute("href")||""})},true);
 document.addEventListener("submit",function(e){var f=e.target;if(f&&f.classList&&f.classList.contains("lead-form"))t("lead_submit")},true)})();
 </script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "131c8b7ec33e4ca78f76a97fed4f86d9"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
 <body>
 
