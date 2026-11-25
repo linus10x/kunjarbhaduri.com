@@ -92,6 +92,12 @@ await t("utm and door values are a finite vocabulary", () => {
   assert.equal(vocab("4695550100", "campaign"), "other");
   assert.equal(vocab("email-denton", "campaign"), "email-denton");
   assert.equal(vocab("email-denton-extra", "campaign"), "other");
+  assert.equal(vocab("post-2026-11-25", "campaign"), "post-2026-11-25");
+  assert.equal(vocab("POST-2026-11-25", "campaign"), "post-2026-11-25");
+  assert.equal(vocab("post-2026-02-30", "campaign"), "other");
+  assert.equal(vocab("post-2026-13-01", "campaign"), "other");
+  assert.equal(vocab("post-2026-11-25-x", "campaign"), "other");
+  assert.equal(vocab("post-4695550100", "campaign"), "other");
   assert.equal(vocab("FPA", "source"), "fpa");
   assert.equal(vocab("door", "medium"), "door");
   assert.equal(vocab("", "source"), "");
