@@ -185,6 +185,13 @@ export function vocab(value, kind) {
   if (kind === "source") return SOURCES.has(v) ? v : "other";
   if (kind === "medium") return MEDIUMS.has(v) ? v : "other";
   if (kind === "campaign") {
+    // Dated social posts ("post-2026-11-25"): a real calendar date only, so the
+    // value carries no free text. Lets each LinkedIn/X post be counted on its own.
+    const post = /^post-(\d{4})-(\d{2})-(\d{2})$/.exec(v);
+    if (post) {
+      const d = new Date(Date.UTC(+post[1], +post[2] - 1, +post[3]));
+      return d.getUTCFullYear() === +post[1] && d.getUTCMonth() === +post[2] - 1 && d.getUTCDate() === +post[3] ? v : "other";
+    }
     const [a, b, ...rest] = v.split("-");
     return !rest.length && CAMPAIGN_CHANNELS.has(a) && CAMPAIGN_COUNTIES.has(b) ? v : "other";
   }
